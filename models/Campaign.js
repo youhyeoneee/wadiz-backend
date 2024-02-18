@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-const connectDB = require("../utils/connectDB");
+const { connectDB, disconnectDB } = require("../utils/db");
+const { readJson, fileNames } = require("../utils/file");
+const { progressBar, figletAsync } = require("../utils/third-party");
 
 const campaignSchema = new mongoose.Schema({
     campaignId: { type: String, required: true },
@@ -15,10 +17,41 @@ const campaignSchema = new mongoose.Schema({
 
 const Campaign = mongoose.model("Campaign", campaignSchema);
 
-async function loadJsonToDB() {
-    connectDB();
+async function saveDataToDB() {
+    try {
+        const figletData = await figletAsync("Save Campaigns To DB");
+        console.log(figletData);
+
+        const jsonData = await readJson(fileNames.campaignList);
+        progressBar.start(jsonData.length, 0);
+
+        await connectDB();
+
+        for (const data of jsonData) {
+            const campaign = new Campaign({
+                campaignId: data.campaignId,
+                categoryName: data.categoryName,
+                title: data.title,
+                totalBackedAmount: data.totalBackedAmount,
+                photoUrl: data.photoUrl,
+                nickName: data.nickName,
+                coreMessage: data.coreMessage,
+                whenOpen: new Date(data.whenOpen),
+                achievementRate: data.achievementRate,
+            });
+            await campaign.save();
+            progressBar.increment();
+        }
+        disconnectDB();
+        console.log("\nData saved successfully!");
+    } catch (error) {
+        progressBar.stop();
+        console.error("\nError saving data:", error);
+    }
 }
 
 module.exports = Campaign;
 
-loadJsonToDB();
+if (require.main === module) {
+    saveDataToDB();
+}
