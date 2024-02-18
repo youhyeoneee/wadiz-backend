@@ -1,10 +1,10 @@
-const fs = require("fs");
-const path = require("path");
 const {
     figletAsync,
-    fetchPage,
+    fetchPagePost,
     fetchFile,
-    saveData,
+    saveJsonData,
+    fileNames,
+    makeWriteStream,
 } = require("./fetch-utils");
 const cliProgress = require("cli-progress");
 const { SingleBar } = require("cli-progress");
@@ -18,7 +18,7 @@ const progressBar = new SingleBar(
 
 async function fetchMain(url) {
     try {
-        const response = await fetchPage(url, data);
+        const response = await fetchPagePost(url, data);
         if (response) {
             const figletData = await figletAsync("Wadiz Campaign List Crawler");
             console.log(figletData);
@@ -34,7 +34,7 @@ async function fetchMain(url) {
                 })
             );
 
-            await saveData(filePath, result);
+            await saveJsonData(fileNames.campaignList, result);
         }
     } catch (error) {
         progressBar.stop();
@@ -45,8 +45,7 @@ async function fetchMain(url) {
 async function fetchImage(url, id, index) {
     const response = await fetchFile(url);
     const name = `${id}.jpeg`;
-    const imageFilePath = path.join(dataPath, "images", name);
-    const file = fs.createWriteStream(imageFilePath);
+    const file = await makeWriteStream(fileNames.campaignImage, name);
 
     if (response) {
         response.data.pipe(file);
@@ -63,11 +62,6 @@ const data = {
     categoryCode: "",
     endYn: "",
 };
-
-// 경로 설정
-const fileName = "campaign-list.json";
-const dataPath = path.join(__dirname, "../data");
-const filePath = path.join(dataPath, fileName);
 
 // fetch
 const url = "https://service.wadiz.kr/api/search/funding";
