@@ -1,20 +1,6 @@
-const {
-    figletAsync,
-    fetchPagePost,
-    fetchFile,
-    saveJsonData,
-    fileNames,
-    makeWriteStream,
-} = require("./fetch-utils");
-const cliProgress = require("cli-progress");
-const { SingleBar } = require("cli-progress");
-
-const progressBar = new SingleBar(
-    {
-        stopOnComplete: true,
-    },
-    cliProgress.Presets.shades_classic
-);
+const { fetchFile, fetchPagePost } = require("../utils/fetch");
+const { makeWriteStream, fileNames, saveJson } = require("../utils/file");
+const { progressBar, figletAsync } = require("../utils/third-party");
 
 async function fetchMain(url) {
     try {
@@ -34,7 +20,7 @@ async function fetchMain(url) {
                 })
             );
 
-            await saveJsonData(fileNames.campaignList, result);
+            await saveJson(fileNames.campaignList, result);
         }
     } catch (error) {
         progressBar.stop();

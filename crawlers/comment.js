@@ -1,20 +1,6 @@
-const {
-    figletAsync,
-    fetchFile,
-    saveJsonData,
-    fetchPageGet,
-    readJsonFile,
-    fileNames,
-} = require("./fetch-utils");
-const cliProgress = require("cli-progress");
-const { SingleBar } = require("cli-progress");
-
-const progressBar = new SingleBar(
-    {
-        stopOnComplete: true,
-    },
-    cliProgress.Presets.shades_classic
-);
+const { fetchPageGet } = require("../utils/fetch");
+const { readJson, saveJson, fileNames } = require("../utils/file");
+const { figletAsync, progressBar } = require("../utils/third-party");
 
 async function fetchMain(url) {
     try {
@@ -36,7 +22,7 @@ async function fetchMain(url) {
 }
 
 async function getCampaignIdList() {
-    let campaignIdList = await readJsonFile(fileNames.campaignList);
+    let campaignIdList = await readJson(fileNames.campaignList);
     campaignIdList = campaignIdList.map((e) => e.campaignId); // campaignId 값만 추출하여 변수에 다시 할당
 
     return campaignIdList;
@@ -58,7 +44,7 @@ async function run() {
         progressBar.increment();
     }
 
-    await saveJsonData(fileNames.comments, result);
+    await saveJson(fileNames.comments, result);
 }
 
 run();
