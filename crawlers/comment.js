@@ -40,7 +40,7 @@ async function run() {
     for (const campaignId of campaignIdList) {
         const url = `https://www.wadiz.kr/web/reward/api/comments/campaigns/${campaignId}`;
         const data = await fetchMain(url);
-        result.push(data);
+        result = result.concat(data);
         progressBar.increment();
     }
 
