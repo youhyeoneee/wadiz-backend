@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const connectDB = require("../utils/connectDB");
 
 const campaignSchema = new mongoose.Schema({
     campaignId: { type: String, required: true },
@@ -14,4 +15,10 @@ const campaignSchema = new mongoose.Schema({
 
 const Campaign = mongoose.model("Campaign", campaignSchema);
 
+async function loadJsonToDB() {
+    connectDB();
+}
+
 module.exports = Campaign;
+
+loadJsonToDB();
