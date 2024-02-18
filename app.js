@@ -3,12 +3,11 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const dotenv = require("dotenv");
-const mongoose = require("mongoose");
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const campaignRouter = require("./routes/campaign");
+const { connectDB } = require("./utils/db");
 
 var app = express();
 
@@ -41,22 +40,6 @@ app.use(function (err, req, res, next) {
     res.render("error");
 });
 
-dotenv.config();
+connectDB(); // connectDB 모듈을 호출하여 MongoDB에 연결
 
-const username = process.env.USER_NAME;
-const password = process.env.PASSWORD;
-const cluster = process.env.CLUSTER;
-const database = process.env.DB;
-const MONGO_URL = `mongodb+srv://${username}:${password}@${cluster}/${database}`;
-
-mongoose
-    .connect(MONGO_URL, {
-        retryWrites: true,
-        w: "majority",
-    })
-    .then((resp) => {
-        console.log(resp);
-        console.log("SUCCESS CONNECTION");
-    })
-    .catch((err) => console.log(err));
 module.exports = app;
