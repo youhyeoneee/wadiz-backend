@@ -3,6 +3,7 @@
 ## 목차
 
 -   [1. 데이터 수집](#1-데이터-수집)
+-   [2. 데이터 DB에 적재](#2-데이터-db에-적재)
 
 ## 1. 데이터 수집
 
@@ -36,3 +37,55 @@
 
 -   데이터
     -   comments.json
+
+## 2. 데이터 DB에 적재
+
+### 2-1. 캠페인
+
+-   스키마
+
+    ```javascript
+    campaignId: { type: String, required: true },
+    categoryName: { type: String, required: true },
+    title: { type: String, required: true },
+    totalBackedAmount: { type: Number, required: true },
+    photoUrl: { type: String, required: true },
+    nickName: { type: String, required: true },
+    coreMessage: { type: String, required: true },
+    whenOpen: { type: Date, required: true },
+    achievementRate: { type: Number, required: true },
+    ```
+
+-   실행
+
+    ```
+    node model/Campaign.js
+    ```
+
+### 2-2. 댓글
+
+-   스키마
+
+    ```javascript
+    body: { type: String, required: true },
+    campaign: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Campaign",
+        required: true,
+    },
+    commentType: { type: String },
+    userNickname: { type: String }, // nickName
+    whenCreated: { type: Date, required: true },
+    commentReplys: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Comment",
+        default: [],
+    },
+    depth: { type: Number, required: true, default: 0 },
+    ```
+
+-   실행
+
+    ```
+    node model/Comment.js
+    ```
