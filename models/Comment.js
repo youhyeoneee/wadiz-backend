@@ -8,6 +8,7 @@ const commentSchema = new mongoose.Schema({
     body: { type: String, required: true },
     campaign: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Campaign",
         required: true,
     },
     commentType: { type: String },
