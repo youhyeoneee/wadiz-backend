@@ -2,18 +2,48 @@ const mongoose = require("mongoose");
 const { connectDB, disconnectDB } = require("../utils/db");
 const { readJson, fileNames } = require("../utils/file");
 const { progressBar, figletAsync } = require("../utils/third-party");
+const Comment = require("./Comment");
 
-const campaignSchema = new mongoose.Schema({
-    campaignId: { type: String, required: true },
-    categoryName: { type: String, required: true },
-    title: { type: String, required: true },
-    totalBackedAmount: { type: Number, required: true },
-    photoUrl: { type: String, required: true },
-    nickName: { type: String, required: true },
-    coreMessage: { type: String, required: true },
-    whenOpen: { type: Date, required: true },
-    achievementRate: { type: Number, required: true },
+const campaignSchema = new mongoose.Schema(
+    {
+        campaignId: { type: String, required: true },
+        categoryName: { type: String, required: true },
+        title: { type: String, required: true },
+        totalBackedAmount: { type: Number, required: true },
+        photoUrl: { type: String, required: true },
+        nickName: { type: String, required: true },
+        coreMessage: { type: String, required: true },
+        whenOpen: { type: Date, required: true },
+        achievementRate: { type: Number, required: true },
+    },
+    {
+        timestamps: true,
+        toJSON: {
+            virtuals: true,
+            versionKey: false,
+        },
+        toObject: {
+            virtuals: true,
+            versionKey: false,
+        },
+    }
+);
+
+campaignSchema.virtual("comments", {
+    ref: "Comment",
+    foreignField: "campaign",
+    localField: "_id",
 });
+
+campaignSchema.statics.getCampaignList = async function (page = 1, size = 10) {
+    return this.find()
+        .skip((page - 1) * size)
+        .limit(size);
+};
+
+campaignSchema.statics.getCampaign = async function (campaignId) {
+    return await this.findById(campaignId).populate("comments");
+};
 
 const Campaign = mongoose.model("Campaign", campaignSchema);
 
