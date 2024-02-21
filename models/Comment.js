@@ -22,6 +22,44 @@ const commentSchema = new mongoose.Schema({
     depth: { type: Number, required: true, default: 0 },
 });
 
+commentSchema.statics.writeComment = async function (
+    body,
+    campaign,
+    userNickname,
+    parentComment = null
+) {
+    try {
+        const whenCreated = Date.now();
+        let depth = 0;
+        let parent;
+
+        if (parentComment) {
+            parent = await this.findById(parentComment);
+            if (!parent) {
+                throw new Error("Parent comment not found");
+            }
+            depth = parent.depth + 1;
+        }
+
+        const comment = await this.create({
+            body,
+            campaign,
+            userNickname,
+            depth,
+            whenCreated,
+        });
+
+        if (parent) {
+            parent.commentReplys.push(comment._id);
+            await parent.save();
+        }
+
+        return comment;
+    } catch (err) {
+        throw err;
+    }
+};
+
 const Comment = mongoose.model("Comment", commentSchema);
 
 module.exports = Comment;
