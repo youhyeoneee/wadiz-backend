@@ -4,6 +4,7 @@
 
 -   [1. 데이터 수집](#1-데이터-수집)
 -   [2. 데이터 DB에 적재](#2-데이터-db에-적재)
+-   [3. 서버 실행](#3-서버-실행)
 
 ## 1. 데이터 수집
 
@@ -89,3 +90,65 @@
     ```
     node model/Comment.js
     ```
+
+## 3. 서버 실행
+
+```
+npm run dev
+```
+
+127.0.0.1:3000 로 접속
+
+### API
+
+-   캠패인 조회 : GET `/api/campaign`
+    -   response
+        -   \_id
+        -   campaignId
+        -   categoryName
+        -   title
+        -   totalBackedAmount
+        -   photoUrl
+        -   nickName
+        -   coreMessage
+        -   whenOpen
+        -   achievementRate
+-   캠페인 id로 조회 : GET `/api/:campaignId`
+    -   response
+        -   \_id
+        -   campaignId
+        -   categoryName
+        -   title
+        -   totalBackedAmount
+        -   photoUrl
+        -   nickName
+        -   coreMessage
+        -   whenOpen
+        -   achievementRate
+        -   comments
+-   캠페인 댓글 달기 : POST `/api/:campaignId/comment`
+
+    -   request body
+        -   body
+        -   userNickname
+    -   response
+        -   body
+        -   campaign
+        -   userNickname
+        -   whenCreated
+        -   commentReplys
+        -   depth
+        -   \_id
+
+-   캠페인 대댓글 달기 : POST `/api/:campaignId/comment/:commentId`
+    -   request body
+        -   body
+        -   userNickname
+    -   response
+        -   body
+        -   campaign
+        -   userNickname
+        -   whenCreated
+        -   commentReplys
+        -   depth
+        -   \_id
