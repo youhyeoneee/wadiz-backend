@@ -35,16 +35,6 @@ campaignSchema.virtual("comments", {
     localField: "_id",
 });
 
-campaignSchema.statics.getCampaignList = async function (page = 1, size = 10) {
-    return this.find()
-        .skip((page - 1) * size)
-        .limit(size);
-};
-
-campaignSchema.statics.getCampaign = async function (campaignId) {
-    return await this.findById(campaignId).populate("comments");
-};
-
 const Campaign = mongoose.model("Campaign", campaignSchema);
 
 async function saveDataToDB(jsonData) {
