@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { connectDB, disconnectDB } = require("../utils/db");
 const { readJson, fileNames } = require("../utils/file");
 const { progressBar, figletAsync } = require("../utils/third-party");
-const Campaign = require("./Campaign");
+const { Campaign } = require("./Campaign");
 
 const commentSchema = new mongoose.Schema({
     body: { type: String, required: true },

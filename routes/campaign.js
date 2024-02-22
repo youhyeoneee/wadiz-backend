@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 
-const Campaign = require("../models/Campaign.js");
+const { Campaign } = require("../models/Campaign.js");
 const Comment = require("../models/Comment.js");
 
 // 조회
@@ -27,7 +27,7 @@ router.get("/:campaignId", async function (req, res, next) {
         });
 
         campaign.comments = campaign.comments.filter(
-            (item) => item.depth !== 1 && item.commentReplys.length !== 0
+            (item) => item.depth === 0 || item.commentReplys.length > 0
         );
         res.json(campaign);
     } catch (err) {
