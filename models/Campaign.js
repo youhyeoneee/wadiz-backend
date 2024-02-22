@@ -47,16 +47,12 @@ campaignSchema.statics.getCampaign = async function (campaignId) {
 
 const Campaign = mongoose.model("Campaign", campaignSchema);
 
-async function saveDataToDB() {
+async function saveDataToDB(jsonData) {
+    const figletData = await figletAsync("Save Campaigns To DB");
+    console.log(figletData);
     try {
-        const figletData = await figletAsync("Save Campaigns To DB");
-        console.log(figletData);
-
-        const jsonData = await readJson(fileNames.campaignList);
-        progressBar.start(jsonData.length, 0);
-
         await connectDB();
-
+        progressBar.start(jsonData.length, 0);
         for (const data of jsonData) {
             const campaign = new Campaign({
                 campaignId: data.campaignId,
@@ -72,6 +68,7 @@ async function saveDataToDB() {
             await campaign.save();
             progressBar.increment();
         }
+
         disconnectDB();
         console.log("\nData saved successfully!");
     } catch (error) {
@@ -80,8 +77,15 @@ async function saveDataToDB() {
     }
 }
 
-module.exports = Campaign;
+module.exports = { saveDataToDB, Campaign };
 
 if (require.main === module) {
-    saveDataToDB();
+    (async () => {
+        try {
+            const jsonData = await readJson(fileNames.campaignList);
+            saveDataToDB(jsonData);
+        } catch (error) {
+            console.error("Error reading JSON:", error);
+        }
+    })();
 }
